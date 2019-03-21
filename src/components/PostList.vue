@@ -61,7 +61,6 @@ export default {
         })
       },
       changePage(value){
-          console.log(1123);
           this.needPaga = value
           this.fetchData()
       }
