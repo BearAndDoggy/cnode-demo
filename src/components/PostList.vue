@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="wrap">
         <div class="loading" v-show="beforeComplete">
             <img src="../assets/loading.gif" >
         </div>
@@ -18,7 +18,7 @@
                         sort_othersList:(post.top === !true && post.good === !true)},]">{{post | showSort}}
                         </span>
 
-                        <router-link :to="{name:'content',params:{id:post.id}}">
+                        <router-link :to="{name:'content',params:{id:post.id,name:post.author.loginname}}">
                             <span class="title">{{post.title}}</span>   
                         </router-link>                       
                     </div>
@@ -29,28 +29,41 @@
                 </li>
             </ul>           
         </div>
+        <pagination @change="changePage"></pagination>
     </div>
 </template>
 <script>
+import pagination from './Pagination'
 export default {
   name: 'cnode_postlist',
+  components: {
+      pagination
+  },
   data(){
       return {
           beforeComplete: true,
           posts: [],
-          sorts: ["全部", "精华", "分享", "问答", "招聘", "客户端测试"]
+          sorts: ["全部", "精华", "分享", "问答", "招聘", "客户端测试"],
+          needPaga: 1,
       }
   },
   methods: {
       fetchData(){
         this.$axios.get('https://cnodejs.org/api/v1/topics', {
-            page: 1,
-            limit: 30
+            params: {
+                page: this.needPaga,
+                limit: 30
+            }
         }).then((res)=>{
             this.posts = res.data.data
             this.beforeComplete = false
         },(error)=>{
         })
+      },
+      changePage(value){
+          console.log(1123);
+          this.needPaga = value
+          this.fetchData()
       }
   },
   beforeMount(){
@@ -71,6 +84,9 @@ export default {
     justify-content: center;
     align-items: center;
 }
+.wrap {
+    background: white;
+}
 a {
     color: inherit;
     text-decoration: none;
@@ -80,6 +96,8 @@ ul li:not(:first-child) {
     justify-content: space-between;
     align-items: center;
     padding: 14px 12px;
+}
+ul li:not(:last-child) {
     border-bottom: 1px solid rgb(240, 240, 240); 
 }
 ul li:not(:first-child):hover{

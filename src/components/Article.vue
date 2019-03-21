@@ -31,7 +31,9 @@
                             <div class="avatar"><img :src="reply.author.avatar_url" alt=""></div>
                         </router-link>                                               
                         <div class="name-wrap">
-                            <span class="name">{{reply.author.loginname}}</span>
+                            <router-link :to="{name: 'user_info',params:{name: reply.author.loginname}}">   
+                                <span class="name">{{reply.author.loginname}}</span>
+                            </router-link> 
                             <span class="index">{{index + 1}}楼•{{reply.create_at | showTime}}</span>
                         </div>
                     </div>
@@ -74,12 +76,19 @@ export default {
   },
   beforeMount(){
       this.fetchData()
+  },
+  watch: {
+      '$route'(){
+          this.fetchData()
+      }
   }
 }
 </script>
+
 <style>
-    /* *{margin: 0;padding: 0;} */
-    @import url('../assets/markdown-github.css');
+@import url('../assets/markdown-github.css');
+</style>
+<style scoped>
     .loading {
         position: absolute;
         left: 0;
@@ -89,9 +98,14 @@ export default {
         align-items: center;
         width: 100%;
         height: 100%;
+        background: rgb(225, 225, 225);
+        z-index: 1;
     }
     .article {
         background: rgb(225, 225, 225);
+        float: left;
+        width: 70.5%;
+        margin-bottom: 30px;
     }
     .up {
         background: white;
@@ -176,6 +190,9 @@ export default {
         font-size: 12px;
         font-weight: 700;
     }
+    .reply .name:hover {
+        color: #385f8a;
+    }
     .reply .index {
         font-size: 11px;
         color: #08c;
@@ -191,7 +208,6 @@ export default {
 
     .reply .reply_content a{
         color: #08c;
-        text-decoration: none;
     }
     .reply .reply_content a:hover{
         text-decoration: underline;
